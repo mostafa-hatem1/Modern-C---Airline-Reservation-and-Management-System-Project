@@ -1,5 +1,5 @@
-#ifndef ADMINISTRATOR_H
-#define ADMINISTRATOR_H
+#ifndef ADMINISTRATOR_HPP
+#define ADMINISTRATOR_HPP
 
 #include "User.hpp"
 #include <string>
@@ -25,4 +25,4 @@ public:
     // void manageFlight(...);
 };
 
-#endif // ADMINISTRATOR_H
+#endif // ADMINISTRATOR_HPP
