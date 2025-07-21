@@ -2,27 +2,52 @@
 #define ADMINISTRATOR_HPP
 
 #include "User.hpp"
+#include <vector>
 #include <string>
+#include <memory>
 
+// Forward declarations for system entities
+class BookingAgent;
+class Passenger;
+class Flight;
+class Aircraft;
+class User;
+
+// The Administrator class enables management of users, flights, aircraft, and system reporting.
 class Administrator : public User {
 public:
-    // Constructor: initializes base User class members
-    Administrator(const std::string& id, const std::string& uname, const std::string& pwdHash)
-        : User(id, uname, pwdHash) {}
+    // --- Constructor ---
+    Administrator(const std::string& id, const std::string& uname, const std::string& pwdHash);
 
-    // Override to return the role of this user
-    std::string getRole() const override { return "Administrator"; }
+    // --- Overridden authentication methods ---
+    std::string getRole() const override;
+    bool verifyPassword(const std::string& password) const override;
 
-    // Password verification (placeholder: compares stored hash with input password)
-    bool verifyPassword(const std::string& password) const override {
-        // In a real application, this should compare hashed passwords securely
-        return passwordHash == password;
-    }
+    // ================== User Management ==================
+    void addBookingAgent(std::vector<std::shared_ptr<BookingAgent>>& agents,
+                         const std::string& id, const std::string& uname, const std::string& pwdHash);
+    void removeBookingAgent(std::vector<std::shared_ptr<BookingAgent>>& agents, const std::string& id);
 
-    // Placeholder for admin-specific methods (to be implemented later)
-    // void addUser(...);
-    // void removeUser(...);
-    // void manageFlight(...);
+    void addPassenger(std::vector<std::shared_ptr<Passenger>>& passengers,
+                      const std::string& id, const std::string& uname, const std::string& pwdHash);
+    void removePassenger(std::vector<std::shared_ptr<Passenger>>& passengers, const std::string& id);
+
+    // ================== Flight Management ==================
+    void addFlight(std::vector<std::shared_ptr<Flight>>& flights, std::shared_ptr<Flight> flight);
+    void updateFlight(std::vector<std::shared_ptr<Flight>>& flights,
+                      const std::string& flightNumber,
+                      std::shared_ptr<Flight> updatedFlight);
+    void removeFlight(std::vector<std::shared_ptr<Flight>>& flights, const std::string& flightNumber);
+    void viewAllFlights(const std::vector<std::shared_ptr<Flight>>& flights) const;
+
+    // ================== Aircraft Management ==================
+    void addAircraft(std::vector<std::shared_ptr<Aircraft>>& aircrafts, std::shared_ptr<Aircraft> aircraft);
+    void removeAircraft(std::vector<std::shared_ptr<Aircraft>>& aircrafts, const std::string& aircraftID);
+
+    // ================== Reporting ==================
+    void generateOperationalReport(const std::vector<std::shared_ptr<Flight>>& flights) const;
+    void generateMaintenanceReport(const std::vector<std::shared_ptr<Aircraft>>& aircrafts) const;
+    void generateUserActivityReport(const std::vector<std::shared_ptr<User>>& users) const;
 };
 
 #endif // ADMINISTRATOR_HPP

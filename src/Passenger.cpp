@@ -45,7 +45,7 @@ void Passenger::viewBookings(const vector<shared_ptr<Reservation>>& reservations
             cout << "Reservation ID: " << res->getReservationID()
                  << ", Flight: " << res->getFlight()->getFlightNumber()
                  << ", Seat: " << res->getSeatNumber()
-                 << ", Status: " << res->getStatus() << endl;
+                 << ", Status: " << Reservation::statusToString(res->getStatus()) << endl;
             found = true;
         }
     }
@@ -59,7 +59,7 @@ void Passenger::viewBoardingPass(const vector<shared_ptr<Reservation>>& reservat
             cout << "Passenger: " << username << endl;
             cout << "Flight: " << res->getFlight()->getFlightNumber() << endl;
             cout << "Seat: " << res->getSeatNumber() << endl;
-            cout << "Status: " << res->getStatus() << endl;
+            cout << "Status: " << Reservation::statusToString(res->getStatus()) << endl;
             cout << "=====================" << endl;
             return;
         }
@@ -92,11 +92,11 @@ void Passenger::searchFlights(const vector<shared_ptr<Flight>>& flights,
 bool Passenger::onlineCheckIn(vector<shared_ptr<Reservation>>& reservations, const string& reservationID) {
     for (auto& res : reservations) {
         if (res->getReservationID() == reservationID && res->getPassenger()->getUserID() == userID) {
-            if (res->getStatus() == "Checked-in") {
+            if (res->getStatus() == Reservation::Status::CheckedIn) {
                 cout << "Already checked in.\n";
                 return false;
             }
-            res->setStatus("Checked-in");
+            res->setStatus(Reservation::Status::CheckedIn);
             cout << "Check-in successful. You are now checked in.\n";
             return true;
         }
@@ -104,6 +104,7 @@ bool Passenger::onlineCheckIn(vector<shared_ptr<Reservation>>& reservations, con
     cout << "Reservation not found or not yours.\n";
     return false;
 }
+
 
 // -- Cancel reservation (marks as cancelled and could trigger refund logic) --
 
@@ -113,10 +114,12 @@ bool Passenger::cancelReservation(vector<shared_ptr<Reservation>>& reservations,
             return res->getReservationID() == reservationID && res->getPassenger()->getUserID() == userID;
         });
     if (it != reservations.end()) {
-        (*it)->setStatus("Cancelled");
+        (*it)->setStatus(Reservation::Status::Cancelled);
         cout << "Reservation cancelled successfully.\n";
+        // (Optional: trigger refund logic here if needed)
         return true;
     }
     cout << "Reservation not found or not yours.\n";
     return false;
 }
+

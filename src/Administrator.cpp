@@ -4,6 +4,8 @@
 #include "Flight.hpp"
 #include "Aircraft.hpp"
 #include <iostream>
+#include <algorithm>
+#include <memory>
 using namespace std;
 
 // Constructor
