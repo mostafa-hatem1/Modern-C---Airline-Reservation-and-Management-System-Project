@@ -98,3 +98,20 @@ void Administrator::generateUserActivityReport(const vector<shared_ptr<User>>& u
     cout << "User Activity Report" << endl;
     // Summarize user logins/bookings/activities
 }
+
+std::shared_ptr<Administrator> Administrator::from_json(const nlohmann::json& j) {
+    std::string id = j.at("id").get<std::string>();
+    std::string uname = j.at("username").get<std::string>();
+    std::string pwdHash = j.at("passwordHash").get<std::string>();
+    return std::make_shared<Administrator>(id, uname, pwdHash);
+}
+
+void Administrator::to_json(nlohmann::json& j) const {
+    j = nlohmann::json{
+        {"role", "Administrator"},
+        {"id", userID},
+        {"username", username},
+        {"passwordHash", passwordHash}
+    };
+}
+

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <utility>
 using namespace std;
+using json = nlohmann::json;
 
 // --- Constructor ---
 Maintenance::Maintenance(const string& maintenanceID,
@@ -48,4 +49,37 @@ void Maintenance::printMaintenanceLog() const {
             cout << "  - " << t << "\n";
     }
     cout << "Notes: " << (notes.empty() ? "N/A" : notes) << "\n";
+
+    
 }
+
+void Maintenance::to_json(json& j) const {
+    j = json{
+        {"maintenanceID", maintenanceID},
+        {"aircraftID", aircraftID},
+        {"scheduledDate", scheduledDate},
+        {"performedDate", performedDate},
+        {"tasks", tasks},
+        {"technicianName", technicianName},
+        {"notes", notes},
+        {"completed", completed}
+    };
+}
+
+std::shared_ptr<Maintenance> Maintenance::from_json(const json& j) {
+    auto m = std::make_shared<Maintenance>(
+                 j.at("maintenanceID").get<std::string>(),
+                 j.at("aircraftID").get<std::string>(),
+                 j.at("scheduledDate").get<std::string>()
+             );
+    m->setPerformedDate(j.value("performedDate", ""));
+    m->tasks = j.value("tasks", std::vector<std::string>{});
+    m->setTechnicianName(j.value("technicianName", ""));
+    m->setNotes(j.value("notes", ""));
+    if (j.contains("completed")) m->markCompleted();
+    return m;
+}
+
+
+
+

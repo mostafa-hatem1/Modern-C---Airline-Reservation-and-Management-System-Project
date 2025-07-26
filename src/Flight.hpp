@@ -1,6 +1,8 @@
 #ifndef FLIGHT_HPP
 #define FLIGHT_HPP
 
+#include <nlohmann/json.hpp>
+#include <memory>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -83,6 +85,9 @@ public:
     // For status as string
     static std::string statusToString(Status s);
     static Status stringToStatus(const std::string& str);
+
+    void to_json(nlohmann::json& j) const;
+    static std::shared_ptr<Flight> from_json(const nlohmann::json& j);
 };
 
 #endif // FLIGHT_HPP

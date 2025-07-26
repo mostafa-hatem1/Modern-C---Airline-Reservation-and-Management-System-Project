@@ -1,6 +1,7 @@
 #include "Crew.hpp"
 #include <iostream>
 using namespace std;
+using json = nlohmann::json;
 
 // --- Constructor ---
 Crew::Crew(const string& crewID, Role role, const string& name)
@@ -54,4 +55,27 @@ Crew::Role Crew::stringToRole(const string& str) {
     if (str == "Pilot") return Role::Pilot;
     if (str == "Flight Attendant") return Role::FlightAttendant;
     return Role::Pilot; // Default
+}
+
+void Crew::to_json(json& j) const {
+    j = json{
+        {"crewID", crewID},
+        {"role", roleToString(role)},
+        {"name", name},
+        {"flightHours", flightHours},
+        {"assigned", assigned},
+        {"assignedFlights", assignedFlights}
+    };
+}
+
+std::shared_ptr<Crew> Crew::from_json(const json& j) {
+    auto c = std::make_shared<Crew>(
+                 j.at("crewID").get<std::string>(),
+                 stringToRole(j.at("role").get<std::string>()),
+                 j.at("name").get<std::string>()
+             );
+    c->flightHours = j.at("flightHours").get<int>();
+    c->assigned = j.at("assigned").get<bool>();
+    c->assignedFlights = j.value("assignedFlights", std::vector<std::string>{});
+    return c;
 }

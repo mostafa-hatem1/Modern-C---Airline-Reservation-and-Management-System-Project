@@ -48,6 +48,9 @@ public:
     void generateOperationalReport(const std::vector<std::shared_ptr<Flight>>& flights) const;
     void generateMaintenanceReport(const std::vector<std::shared_ptr<Aircraft>>& aircrafts) const;
     void generateUserActivityReport(const std::vector<std::shared_ptr<User>>& users) const;
+
+    static std::shared_ptr<Administrator> from_json(const nlohmann::json& j);
+    void to_json(nlohmann::json& j) const override;
 };
 
 #endif // ADMINISTRATOR_HPP

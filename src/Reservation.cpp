@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <utility>
 using namespace std;
+using json = nlohmann::json;
 
 // --- Constructor ---
 Reservation::Reservation(
@@ -85,4 +86,34 @@ void Reservation::printBoardingPass(const std::string& gate, const std::string& 
          << "Gate: " << gate << '\n'
          << "Boarding Time: " << boardingTime << '\n'
          << "-----------------------------" << endl;
+}
+
+void Reservation::to_json(json& j) const {
+    j = json{
+        {"reservationID", reservationID},
+        {"passengerID", passenger->getUserID()},
+        {"flightNumber", flight->getFlightNumber()},
+        {"seatNumber", seatNumber},
+        {"status", statusToString(status)},
+        {"totalCost", totalCost},
+        {"paymentMethod", paymentMethod},
+        {"paymentDetails", paymentDetails},
+        {"refundProcessed", refundProcessed}
+    };
+}
+
+std::shared_ptr<Reservation> Reservation::from_json(const json& j) {
+    // Passenger and Flight pointers to link after all are loaded, here set nullptr placeholders
+    auto reservation = std::make_shared<Reservation>(
+                           j.at("reservationID").get<std::string>(),
+                           nullptr,
+                           nullptr,
+                           j.at("seatNumber").get<std::string>(),
+                           j.at("totalCost").get<double>(),
+                           j.at("paymentMethod").get<std::string>(),
+                           j.at("paymentDetails").get<std::string>()
+                       );
+    reservation->setStatus(stringToStatus(j.at("status").get<std::string>()));
+    reservation->refundProcessed = j.value("refundProcessed", false);
+    return reservation;
 }

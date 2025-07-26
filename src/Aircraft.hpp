@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
+#include <memory>
 
 // Forward-declare MaintenanceLog if you have maintenance tracking as a separate class.
 class MaintenanceLog;
@@ -40,6 +42,9 @@ public:
     // --- Utilities ---
     bool isAvailable() const;
     void printAircraftDetails() const;
+
+    void to_json(nlohmann::json& j) const;
+    static std::shared_ptr<Aircraft> from_json(const nlohmann::json& j);
 };
 
 #endif // AIRCRAFT_HPP

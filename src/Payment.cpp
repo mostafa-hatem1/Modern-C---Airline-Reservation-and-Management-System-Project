@@ -3,6 +3,7 @@
 #include <utility>
 #include <iomanip>
 using namespace std;
+using json = nlohmann::json;
 
 // --- Constructor ---
 Payment::Payment(const string& paymentID,
@@ -68,4 +69,25 @@ void Payment::printPaymentDetails() const {
          << "Details: "   << details    << "\n"
          << "Amount: $"   << amount     << "\n"
          << "Status: "    << statusToString(status) << "\n";
+}
+
+void Payment::to_json(json& j) const {
+    j = json{
+        {"paymentID", paymentID},
+        {"method", method},
+        {"details", details},
+        {"amount", amount},
+        {"status", statusToString(status)}
+    };
+}
+
+std::shared_ptr<Payment> Payment::from_json(const json& j) {
+    auto p = std::make_shared<Payment>(
+                 j.at("paymentID").get<std::string>(),
+                 j.at("method").get<std::string>(),
+                 j.at("details").get<std::string>(),
+                 j.at("amount").get<double>(),
+                 stringToStatus(j.at("status").get<std::string>())
+             );
+    return p;
 }

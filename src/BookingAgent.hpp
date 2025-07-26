@@ -47,6 +47,9 @@ public:
     // 5. View all reservations by passenger
     void viewReservations(const std::vector<std::shared_ptr<Reservation>>& reservations,
                           const std::string& passengerID) const;
+                          
+    static std::shared_ptr<BookingAgent> from_json(const nlohmann::json& j);
+    void to_json(nlohmann::json& j) const override;
 };
 
 #endif // BOOKINGAGENT_HPP

@@ -2,6 +2,9 @@
 #define PAYMENT_HPP
 
 #include <string>
+#include <nlohmann/json.hpp>
+#include <memory>
+
 
 class Payment {
 public:
@@ -39,6 +42,9 @@ public:
     static std::string statusToString(Status s);
     static Status stringToStatus(const std::string& str);
     void printPaymentDetails() const;
+
+    void to_json(nlohmann::json& j) const;
+    static std::shared_ptr<Payment> from_json(const nlohmann::json& j);
 };
 
 #endif // PAYMENT_HPP

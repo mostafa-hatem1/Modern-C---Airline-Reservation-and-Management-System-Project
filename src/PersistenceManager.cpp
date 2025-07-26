@@ -4,10 +4,13 @@
 #include <fstream>
 #include <filesystem>
 #include <iostream>
+#include <stdexcept>
+#include <vector>
+#include <memory>
 
+namespace fs = std::filesystem;
 using namespace std;
 using json = nlohmann::json;
-namespace fs = std::filesystem;
 
 // --- Utility: Save JSON to File ---
 static bool saveJsonToFile(const json& j, const string& filename) {

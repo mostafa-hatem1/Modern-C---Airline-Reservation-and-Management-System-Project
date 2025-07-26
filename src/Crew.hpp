@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
+#include <memory>
 
 class Crew {
 public:
@@ -41,6 +43,11 @@ public:
     void printCrewDetails() const;
     static std::string roleToString(Role r);
     static Role stringToRole(const std::string& str);
+
+    void to_json(nlohmann::json& j) const;
+    static std::shared_ptr<Crew> from_json(const nlohmann::json& j);
+
+    
 };
 
 #endif // CREW_HPP

@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
+#include <memory>
 
 class Maintenance {
 private:
@@ -40,6 +42,9 @@ public:
 
     // --- Output Utilities ---
     void printMaintenanceLog() const;
+
+    void to_json(nlohmann::json& j) const;
+    static std::shared_ptr<Maintenance> from_json(const nlohmann::json& j);
 };
 
 #endif // MAINTENANCE_HPP

@@ -3,6 +3,7 @@
 #include <utility>
 using namespace std;
 
+using json = nlohmann::json;
 // --- Constructor ---
 Aircraft::Aircraft(const string& id, const string& type, int seatCapacity)
     : aircraftID(id), type(type), seatCapacity(seatCapacity), status("Available") {}
@@ -46,4 +47,27 @@ void Aircraft::printAircraftDetails() const {
             cout << "- " << log << "\n";
         }
     }
+}
+
+void Aircraft::to_json(json& j) const {
+    j = json{
+        {"aircraftID", aircraftID},
+        {"type", type},
+        {"seatCapacity", seatCapacity},
+        {"status", status},
+        {"maintenanceSchedule", maintenanceSchedule},
+        {"maintenanceLogs", maintenanceLogs}
+    };
+}
+
+std::shared_ptr<Aircraft> Aircraft::from_json(const json& j) {
+    auto ac = std::make_shared<Aircraft>(
+                 j.at("aircraftID").get<std::string>(),
+                 j.at("type").get<std::string>(),
+                 j.at("seatCapacity").get<int>()
+             );
+    ac->setStatus(j.at("status").get<std::string>());
+    ac->maintenanceSchedule = j.value("maintenanceSchedule", std::vector<std::string>{});
+    ac->maintenanceLogs = j.value("maintenanceLogs", std::vector<std::string>{});
+    return ac;
 }

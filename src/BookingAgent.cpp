@@ -127,9 +127,26 @@ void BookingAgent::viewReservations(
             cout << "Reservation ID: " << res->getReservationID()
                  << ", Flight: " << res->getFlight()->getFlightNumber()
                  << ", Seat: " << res->getSeatNumber()
-                 << ", Status: " << res->getStatus() << endl;
+                 << ", Status: " << Reservation::statusToString(res->getStatus()) << endl;
             found = true;
         }
     }
     if (!found) cout << "No reservations found for this passenger.\n";
 }
+
+std::shared_ptr<BookingAgent> BookingAgent::from_json(const nlohmann::json& j) {
+    std::string id = j.at("id").get<std::string>();
+    std::string uname = j.at("username").get<std::string>();
+    std::string pwdHash = j.at("passwordHash").get<std::string>();
+    return std::make_shared<BookingAgent>(id, uname, pwdHash);
+}
+
+void BookingAgent::to_json(nlohmann::json& j) const {
+    j = nlohmann::json{
+        {"role", "BookingAgent"},
+        {"id", userID},
+        {"username", username},
+        {"passwordHash", passwordHash}
+    };
+}
+

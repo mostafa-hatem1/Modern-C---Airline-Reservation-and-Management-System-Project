@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 using namespace std;
+using json = nlohmann::json;
 
 // -- Constructors
 
@@ -133,4 +134,49 @@ Flight::Status Flight::stringToStatus(const string& str) {
     if (str == "Canceled") return Status::Canceled;
     if (str == "Completed") return Status::Completed;
     return Status::Scheduled; // default
+}
+
+void Flight::to_json(json& j) const {
+    j = json{
+        {"flightNumber", flightNumber},
+        {"origin", origin},
+        {"destination", destination},
+        {"departureDate", departureDate},
+        {"departureTime", departureTime},
+        {"arrivalDate", arrivalDate},
+        {"arrivalTime", arrivalTime},
+        {"aircraftType", aircraft ? aircraft->getType() : "Unknown"},
+        {"totalSeats", totalSeats},
+        {"price", price},
+        {"status", statusToString(status)},
+        {"pilotID", pilotID},
+        {"attendantIDs", attendantIDs}
+        // For seatMap, if you want to save, consider serializing only reserved seats or simplified info
+    };
+}
+
+std::shared_ptr<Flight> Flight::from_json(const json& j) {
+    std::string fn = j.at("flightNumber").get<std::string>();
+    std::string org = j.at("origin").get<std::string>();
+    std::string dest = j.at("destination").get<std::string>();
+    std::string depDate = j.at("departureDate").get<std::string>();
+    std::string depTime = j.at("departureTime").get<std::string>();
+    std::string arrDate = j.at("arrivalDate").get<std::string>();
+    std::string arrTime = j.at("arrivalTime").get<std::string>();
+    // Aircraft pointer can be linked later using aircraftType or Aircraft ID externally
+    auto air = nullptr; // placeholder, link aircraft after loading all aircrafts
+    int seats = j.at("totalSeats").get<int>();
+    double price = j.at("price").get<double>();
+    auto statStr = j.at("status").get<std::string>();
+    Flight::Status stat = Flight::stringToStatus(statStr);
+    std::string pid = j.value("pilotID", "");
+    std::vector<std::string> aids = j.value("attendantIDs", std::vector<std::string>{});
+
+    auto flight = std::make_shared<Flight>(fn, org, dest, depDate, depTime, arrDate, arrTime, air, seats, price, stat);
+    flight->assignPilot(pid);
+    flight->assignAttendants(aids);
+
+    // Seat map deserialization is optional and can be handled separately
+
+    return flight;
 }

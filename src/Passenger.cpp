@@ -123,3 +123,26 @@ bool Passenger::cancelReservation(vector<shared_ptr<Reservation>>& reservations,
     return false;
 }
 
+std::shared_ptr<Passenger> Passenger::from_json(const nlohmann::json& j) {
+    std::string id = j.at("id").get<std::string>();
+    std::string uname = j.at("username").get<std::string>();
+    std::string pwdHash = j.at("passwordHash").get<std::string>();
+    // Optionally handle loyaltyPoints
+    auto p = std::make_shared<Passenger>(id, uname, pwdHash);
+    if (j.contains("loyaltyPoints")) {
+        p->addLoyaltyPoints(j.at("loyaltyPoints").get<int>());
+    }
+    return p;
+}
+
+void Passenger::to_json(nlohmann::json& j) const {
+    j = nlohmann::json{
+        {"role", "Passenger"},
+        {"id", userID},
+        {"username", username},
+        {"passwordHash", passwordHash},
+        {"loyaltyPoints", getLoyaltyPoints()}
+    };
+}
+
+

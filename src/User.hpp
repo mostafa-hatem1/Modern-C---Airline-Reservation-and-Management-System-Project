@@ -2,6 +2,8 @@
 #define USER_H
 
 #include <string>
+#include <nlohmann/json.hpp>
+#include <memory>
 
 class User {
 protected:
@@ -28,6 +30,12 @@ public:
 
     // Utility: verify password (to be implemented in derived classes)
     virtual bool verifyPassword(const std::string& password) const = 0;
+
+    // Pure virtual for serialization in each subclass
+    virtual void to_json(nlohmann::json& j) const = 0;
+
+    // Static factory for deserialization
+    static std::shared_ptr<User> from_json(const nlohmann::json& j);
 };
 
 #endif // USER_H

@@ -4,6 +4,7 @@
 #include "Aircraft.hpp"
 #include "Maintenance.hpp"
 #include "User.hpp"
+#include "Passenger.hpp"
 
 #include <iostream>
 #include <iomanip>

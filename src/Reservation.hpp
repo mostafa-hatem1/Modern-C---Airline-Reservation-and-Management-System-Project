@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <nlohmann/json.hpp>
 
 class Passenger;
 class Flight;
@@ -56,6 +57,11 @@ public:
     // Present to user (for check-in, etc.)
     void printReservationDetails() const;
     void printBoardingPass(const std::string& gate = "TBD", const std::string& boardingTime = "TBD") const;
+
+    void to_json(nlohmann::json& j) const;
+    static std::shared_ptr<Reservation> from_json(const nlohmann::json& j);
 };
+
+ 
 
 #endif // RESERVATION_HPP
