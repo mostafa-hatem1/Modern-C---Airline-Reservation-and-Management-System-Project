@@ -1,4 +1,12 @@
 #include "PersistenceManager.hpp"
+#include "User.hpp"
+#include "Flight.hpp"
+#include "Reservation.hpp"
+#include "Aircraft.hpp"
+#include "Maintenance.hpp"
+#include "Payment.hpp"
+#include "Passenger.hpp"
+#include "Crew.hpp"
 
 #include <nlohmann/json.hpp>
 #include <fstream>
