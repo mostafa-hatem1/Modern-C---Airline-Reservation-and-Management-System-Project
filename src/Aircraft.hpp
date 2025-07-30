@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <memory>
 
 // Forward-declare MaintenanceLog if you have maintenance tracking as a separate class.

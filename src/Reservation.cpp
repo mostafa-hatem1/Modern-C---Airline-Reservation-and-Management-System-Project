@@ -1,49 +1,50 @@
 #include "Reservation.hpp"
 #include "Passenger.hpp"
 #include "Flight.hpp"
+
 #include <iostream>
 #include <iomanip>
 #include <utility>
+#include "json.hpp"
 using namespace std;
 using json = nlohmann::json;
 
 // --- Constructor ---
-Reservation::Reservation(
-    std::string reservationID,
-    std::shared_ptr<Passenger> passenger,
-    std::shared_ptr<Flight> flight,
-    std::string seatNumber,
-    double totalCost,
-    std::string paymentMethod,
-    std::string paymentDetails)
-    : reservationID(std::move(reservationID)),
+Reservation::Reservation(const string& reservationID,
+                         shared_ptr<Passenger> passenger,
+                         shared_ptr<Flight> flight,
+                         const string& seatNumber,
+                         double totalCost,
+                         const string& paymentMethod,
+                         const string& paymentDetails)
+    : reservationID(reservationID),
       passenger(std::move(passenger)),
       flight(std::move(flight)),
-      seatNumber(std::move(seatNumber)),
+      seatNumber(seatNumber),
       status(Status::Confirmed),
       totalCost(totalCost),
-      paymentMethod(std::move(paymentMethod)),
-      paymentDetails(std::move(paymentDetails)),
+      paymentMethod(paymentMethod),
+      paymentDetails(paymentDetails),
       refundProcessed(false)
 {}
 
 // --- Getters ---
-std::string Reservation::getReservationID() const            { return reservationID; }
-std::shared_ptr<Passenger> Reservation::getPassenger() const { return passenger; }
-std::shared_ptr<Flight> Reservation::getFlight()  const      { return flight; }
-std::string Reservation::getSeatNumber()          const      { return seatNumber; }
-double Reservation::getTotalCost()                const      { return totalCost; }
-Reservation::Status Reservation::getStatus()      const      { return status; }
-std::string Reservation::getPaymentMethod()       const      { return paymentMethod; }
-std::string Reservation::getPaymentDetails()      const      { return paymentDetails; }
+string Reservation::getReservationID() const { return reservationID; }
+shared_ptr<Passenger> Reservation::getPassenger() const { return passenger; }
+shared_ptr<Flight> Reservation::getFlight() const { return flight; }
+string Reservation::getSeatNumber() const { return seatNumber; }
+Reservation::Status Reservation::getStatus() const { return status; }
+double Reservation::getTotalCost() const { return totalCost; }
+string Reservation::getPaymentMethod() const { return paymentMethod; }
+string Reservation::getPaymentDetails() const { return paymentDetails; }
 
 // --- Setters and State Updates ---
-void Reservation::setStatus(Status newStatus)             { status = newStatus; }
-void Reservation::setSeatNumber(const std::string& newSeatNumber) { seatNumber = newSeatNumber; }
-void Reservation::markRefundProcessed()                   { refundProcessed = true; }
+void Reservation::setStatus(Status newStatus) { status = newStatus; }
+void Reservation::setSeatNumber(const string& newSeatNumber) { seatNumber = newSeatNumber; }
+void Reservation::markRefundProcessed() { refundProcessed = true; }
 
 // --- Status Utilities ---
-std::string Reservation::statusToString(Status s) {
+string Reservation::statusToString(Status s) {
     switch (s) {
         case Status::Confirmed:  return "Confirmed";
         case Status::Cancelled:  return "Cancelled";
@@ -51,7 +52,8 @@ std::string Reservation::statusToString(Status s) {
         default:                 return "Unknown";
     }
 }
-Reservation::Status Reservation::stringToStatus(const std::string& str) {
+
+Reservation::Status Reservation::stringToStatus(const string& str) {
     if (str == "Confirmed")  return Status::Confirmed;
     if (str == "Cancelled")  return Status::Cancelled;
     if (str == "Checked-in") return Status::CheckedIn;
@@ -73,7 +75,7 @@ void Reservation::printReservationDetails() const {
          << "Payment Details: " << paymentDetails << "\n";
 }
 
-void Reservation::printBoardingPass(const std::string& gate, const std::string& boardingTime) const {
+void Reservation::printBoardingPass(const string& gate, const string& boardingTime) const {
     cout << "-----------------------------\n"
          << "Reservation ID: " << reservationID << '\n'
          << "Passenger: " << passenger->getUsername() << '\n'
@@ -88,6 +90,7 @@ void Reservation::printBoardingPass(const std::string& gate, const std::string& 
          << "-----------------------------" << endl;
 }
 
+// --- JSON Serialization ---
 void Reservation::to_json(json& j) const {
     j = json{
         {"reservationID", reservationID},
@@ -102,18 +105,18 @@ void Reservation::to_json(json& j) const {
     };
 }
 
-std::shared_ptr<Reservation> Reservation::from_json(const json& j) {
+shared_ptr<Reservation> Reservation::from_json(const json& j) {
     // Passenger and Flight pointers to link after all are loaded, here set nullptr placeholders
-    auto reservation = std::make_shared<Reservation>(
-                           j.at("reservationID").get<std::string>(),
-                           nullptr,
-                           nullptr,
-                           j.at("seatNumber").get<std::string>(),
+    auto reservation = make_shared<Reservation>(
+                           j.at("reservationID").get<string>(),
+                           nullptr,  // Will be linked later using passengerID
+                           nullptr,  // Will be linked later using flightNumber
+                           j.at("seatNumber").get<string>(),
                            j.at("totalCost").get<double>(),
-                           j.at("paymentMethod").get<std::string>(),
-                           j.at("paymentDetails").get<std::string>()
+                           j.at("paymentMethod").get<string>(),
+                           j.at("paymentDetails").get<string>()
                        );
-    reservation->setStatus(stringToStatus(j.at("status").get<std::string>()));
+    reservation->setStatus(stringToStatus(j.at("status").get<string>()));
     reservation->refundProcessed = j.value("refundProcessed", false);
     return reservation;
 }

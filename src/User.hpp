@@ -2,7 +2,7 @@
 #define USER_H
 
 #include <string>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <memory>
 
 class User {

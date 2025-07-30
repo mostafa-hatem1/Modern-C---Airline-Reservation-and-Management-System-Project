@@ -1,9 +1,9 @@
 #ifndef RESERVATION_HPP
 #define RESERVATION_HPP
+#include "json.hpp"
 
 #include <string>
 #include <memory>
-#include <nlohmann/json.hpp>
 
 class Passenger;
 class Flight;
@@ -25,6 +25,7 @@ private:
     bool refundProcessed;
 
 public:
+    // --- Constructor ---
     Reservation(const std::string& reservationID,
                 std::shared_ptr<Passenger> passenger,
                 std::shared_ptr<Flight> flight,
@@ -33,35 +34,33 @@ public:
                 const std::string& paymentMethod,
                 const std::string& paymentDetails);
 
-    // Getters
+    // --- Getters ---
     std::string getReservationID() const;
     std::shared_ptr<Passenger> getPassenger() const;
     std::shared_ptr<Flight> getFlight() const;
     std::string getSeatNumber() const;
     Status getStatus() const;
+
     double getTotalCost() const;
     std::string getPaymentMethod() const;
     std::string getPaymentDetails() const;
 
-    // Setters and actions
+    // --- Setters and Actions ---
     void setStatus(Status newStatus);
     void setSeatNumber(const std::string& newSeatNumber);
-
-    // refund flag
     void markRefundProcessed();
 
-    // Util
+    // --- Utilities ---
     static std::string statusToString(Status s);
     static Status stringToStatus(const std::string& str);
 
-    // Present to user (for check-in, etc.)
+    // --- Presentation ---
     void printReservationDetails() const;
     void printBoardingPass(const std::string& gate = "TBD", const std::string& boardingTime = "TBD") const;
 
+    // --- JSON Serialization ---
     void to_json(nlohmann::json& j) const;
     static std::shared_ptr<Reservation> from_json(const nlohmann::json& j);
 };
-
- 
 
 #endif // RESERVATION_HPP

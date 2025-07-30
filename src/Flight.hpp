@@ -1,7 +1,7 @@
 #ifndef FLIGHT_HPP
 #define FLIGHT_HPP
 
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <memory>
 #include <string>
 #include <vector>

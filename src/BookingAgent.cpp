@@ -40,35 +40,50 @@ void BookingAgent::searchFlights(
     if (!found) cout << "No matching flights found.\n";
 }
 
-// 2. Book a flight for a passenger
-shared_ptr<Reservation> BookingAgent::bookFlight(
-        vector<shared_ptr<Reservation>>& reservations,
-        shared_ptr<Passenger> passenger,
-        shared_ptr<Flight> flight,
-        const string& seatNumber,
-        const string& paymentMethod,
-        const string& paymentDetails) {
-    // Check if seat is available (assuming Flight has isSeatAvailable)
+std::shared_ptr<Reservation> BookingAgent::bookFlight(
+    std::vector<std::shared_ptr<Reservation>>& reservations,
+    std::shared_ptr<Passenger> passenger,
+    std::shared_ptr<Flight> flight,
+    const std::string& seatNumber,
+    const std::string& paymentMethod,
+    const std::string& paymentDetails) {
+
+    // Check if seat is available
     if (!flight->isSeatAvailable(seatNumber)) {
-        cout << "Seat " << seatNumber << " is not available. Booking failed.\n";
+        std::cout << "Seat " << seatNumber << " is not available. Booking failed.\n";
         return nullptr;
     }
+
     // Simulate payment processing (to be expanded)
     bool paymentSuccess = true; // Pretend payment is always successful for now
     if (!paymentSuccess) {
-        cout << "Payment failed.\n";
+        std::cout << "Payment failed.\n";
         return nullptr;
     }
+
     // Reserve seat in flight
     flight->reserveSeat(seatNumber);
 
-    // Create new reservation
-    string resID = "R" + to_string(reservations.size() + 1); // Simple reservation ID
-    auto reservation = make_shared<Reservation>(resID, passenger, flight, seatNumber, "Confirmed");
+    // Create new reservation ID
+    std::string resID = "R" + std::to_string(reservations.size() + 1); // Simple reservation ID
+
+    // Create the reservation by passing all 7 required arguments
+    auto reservation = std::make_shared<Reservation>(
+        resID,
+        passenger,
+        flight,
+        seatNumber,
+        flight->getPrice(),    // totalCost, assuming Flight has getPrice()
+        paymentMethod,
+        paymentDetails
+    );
+
     reservations.push_back(reservation);
-    cout << "Booking successful. Reservation ID: " << resID << endl;
+
+    std::cout << "Booking successful. Reservation ID: " << resID << std::endl;
     return reservation;
 }
+
 
 // 3. Modify reservation (change seat)
 bool BookingAgent::modifyReservation(

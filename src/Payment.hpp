@@ -2,7 +2,7 @@
 #define PAYMENT_HPP
 
 #include <string>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <memory>
 
 
